@@ -5,7 +5,40 @@ const rateLimit = require("express-rate-limit");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const kv = require("./structs/kv.js");
-const config = JSON.parse(fs.readFileSync("./Config/config.json").toString());
+const config = fs.existsSync("./Config/config.json") 
+    ? JSON.parse(fs.readFileSync("./Config/config.json").toString())
+    : {
+        port: process.env.PORT || 3551,
+        moderators: (process.env.MODERATORS || "").split(",").filter(Boolean),
+        discord: {
+            bUseDiscordBot: true,
+            bot_token: process.env.BOT_TOKEN || "",
+            bEnableInGamePlayerCount: true
+        },
+        mongodb: { database: process.env.MONGODB_URI || "mongodb://127.0.0.1/Reload" },
+        chat: { EnableGlobalChat: false },
+        bEnableDebugLogs: false,
+        bEnableFormattedLogs: false,
+        bEnableRebootUser: true,
+        bEnableCrossBans: false,
+        Api: { bApiKey: process.env.API_KEY || "ur-api-key", reasons: { Kill: 25, Win: 50 } },
+        Website: { bUseWebsite: false, websiteport: 100 },
+        matchmakerIP: process.env.MATCHMAKER_IP || "127.0.0.1:80",
+        gameServerIP: (process.env.GAME_SERVER_IP || "127.0.0.1:7777:playlist_defaultsolo").split(";"),
+        bEnableBattlepass: false, bBattlePassSeason: 2,
+        bEnableOnlyOneVersionJoinable: false, bVersionJoinable: 2,
+        bUseAutoRotate: false, bEnableAutoRotateDebugLogs: false,
+        bEnableDiscordWebhook: false, bChapterlimit: "1", bSeasonlimit: "10",
+        bRotateTime: "00:00", bExcludedItems: [], bItemShopWebhook: "",
+        bDailyItemsAmount: 6, bFeaturedItemsAmount: 2,
+        bEnableReports: false, bReportChannelId: "",
+        bCompletedSeasonalQuests: false, bEnableSACRewards: false, bPercentageSACRewards: 0,
+        bEnableAutoBackendRestart: false, bRestartTime: "",
+        bEnableBackendStatus: false, bBackendStatusChannelId: "",
+        bEnableHTTPS: false, ssl: { cert: "", key: "" },
+        bEnableCalderaService: false, bGameVersion: "27.11", bCalderaServicePort: 5000,
+        bEnableGeodeEvent: false, geodeEventStartDate: "2020-01-01T00:00:00.000Z"
+    };
 const WebSocket = require('ws');
 const https = require("https");
 
